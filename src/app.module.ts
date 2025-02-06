@@ -13,19 +13,24 @@ import { FindByIdUserCases } from './application/use-cases/user/findById-user.us
 import { UpdateUserCases } from './application/use-cases/user/update-user.usecase';
 import { PrismaAuthRepository } from './infrastructure/database/prisma-auth.database.repository';
 import { UserController } from './infrastructure/controller/user.controller';
+import { PassportModule } from '@nestjs/passport';
+import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.usecase';
+import { LocalStrategy } from './infrastructure/security/local.strategy';
 
 @Module({
   imports: [
+    PassportModule,
     PrismaModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development', '.env.production'],
       isGlobal: true,
     }),
   ],
-  controllers: [AuthController,UserController],
+  controllers: [AuthController, UserController],
   providers: [
     PrismaService,
     Bcrypt,
+    LocalStrategy, // Uncommented to register the LocalStrategy
     {
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,
@@ -35,6 +40,7 @@ import { UserController } from './infrastructure/controller/user.controller';
       useClass: PrismaAuthRepository,
     },
     RegisterAuthCases,
+    LoginAuthUseCases,
     FindAllUserCases,
     FindByIdUserCases,
     UpdateUserCases,

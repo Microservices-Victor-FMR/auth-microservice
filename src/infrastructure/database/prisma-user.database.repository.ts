@@ -10,11 +10,8 @@ export class PrismaUserRepository implements UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     const founduser = await this.prisma.user.findUnique({ where: { email } });
 
-    if (!founduser) {
-      return null;
-    }
 
-    return new User(
+    return founduser ? new User(
       founduser.id,
       founduser.name,
       founduser.email,
@@ -24,7 +21,7 @@ export class PrismaUserRepository implements UserRepository {
       founduser.is_deleted,
       founduser.created_at,
       founduser.updated_at,
-    );
+    ): null
   }
 
   async findAll(): Promise<User[]> {
