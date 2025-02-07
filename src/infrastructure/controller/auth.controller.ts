@@ -4,6 +4,7 @@ import {
   Injectable,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { RegisterAuthCases } from '../../application/use-cases/auth/register-auth.usecase';
@@ -11,7 +12,10 @@ import { RegisterDto } from 'src/application/dtos/register-user.dto';
 import { LoginAuthUseCases } from 'src/application/use-cases/auth/login-auth.usecase';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from '../security/guard/autenticación-local.guard';
-import { Request } from 'express';
+import { Request,Response } from 'express';
+import { User } from 'src/core/entities/user.entity';
+import { JwtAuthGuard } from '../security/guard/jwt-auth.guard';
+import { json } from 'stream/consumers';
 
 @Injectable()
 @Controller('auth')
@@ -29,15 +33,18 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: Request) {
-    const user = req.user;
-    return { message: 'Login Exitoso', user };
+  async login(@Req() req: Request, @Res()res:Response) {
+
+    const result = await this.loginAuthCases.login(req.user)
+    res.cookie('token',result.token, { httpOnly: true })
+    return res.json({ message: 'Login Exitoso'});
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Req() req: Request) {
-  
-    return { message: 'Logout Exitoso' };
+   logout(@Res() res: Response) {
+    res.clearCookie('token');
+    return res.json({message:"Logout Exitoso"})
   }
+
 }

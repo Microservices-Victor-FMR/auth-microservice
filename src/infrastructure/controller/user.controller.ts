@@ -6,6 +6,8 @@ import {
   Injectable,
   Param,
   Patch,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { FindByIdUserCases } from '../../application/use-cases/user/findById-user.usecase';
 import { FindByIdDto } from 'src/application/dtos/findById-user.dto';
@@ -13,6 +15,8 @@ import { UpdateUserCases } from '../../application/use-cases/user/update-user.us
 import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
 import { DeleteUserCases } from 'src/application/use-cases/user/delete-user.usecase';
 import { FindAllUserCases } from 'src/application/use-cases/user/findAll-user.usecase';
+import { JwtAuthGuard } from '../security/guard/jwt-auth.guard';
+import { Request } from 'express';
 
 @Injectable()
 @Controller('profile')
@@ -24,11 +28,10 @@ export class UserController {
     private readonly deleteUserCases: DeleteUserCases,
   ) {}
 
-
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll() {
-    const result = await this.findAllUserCases.execute();
-    return result;
+  async findAll(@Req() req: Request) {
+    return await this.findAllUserCases.execute(req.user);
   }
 
   @Get('/:id')

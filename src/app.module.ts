@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './infrastructure/database/prisma.module'; 
+import { PrismaModule } from './infrastructure/database/prisma.module';
 import { AuthController } from './infrastructure/controller/auth.controller';
 import { PrismaUserRepository } from './infrastructure/database/prisma-user.database.repository';
-import { PrismaService } from './infrastructure/database/prisma.service'; 
+import { PrismaService } from './infrastructure/database/prisma.service';
 import { AUTH_REPOSITORY, USER_REPOSITORY } from './token.contants';
 import { Bcrypt } from './infrastructure/security/bcrypt.security';
 import { DeleteUserCases } from './application/use-cases/user/delete-user.usecase';
@@ -16,6 +16,9 @@ import { UserController } from './infrastructure/controller/user.controller';
 import { PassportModule } from '@nestjs/passport';
 import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.usecase';
 import { LocalStrategy } from './infrastructure/security/local.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './infrastructure/security/jwt.strategy'; 
 
 @Module({
   imports: [
@@ -25,12 +28,22 @@ import { LocalStrategy } from './infrastructure/security/local.strategy';
       envFilePath: ['.env.development', '.env.production'],
       isGlobal: true,
     }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret:configService.get<string>('JWT_SECRET') || 'hard!to-guess_secret',
+        signOptions: { expiresIn: '1h' },
+      }),
+      inject: [ConfigService],
+    }),
+   
   ],
   controllers: [AuthController, UserController],
   providers: [
     PrismaService,
     Bcrypt,
-    LocalStrategy, // Uncommented to register the LocalStrategy
+    LocalStrategy,
+    JwtStrategy, 
     {
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,
