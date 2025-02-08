@@ -34,7 +34,6 @@
     "class-validator": "^0.14.1",
     "dotenv-cli": "^8.0.0",
     "nats": "^2.29.1",
-    "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
@@ -48,7 +47,6 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.3",
     "@types/node": "^22.13.1",
-    "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.23.0",

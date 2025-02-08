@@ -18,7 +18,6 @@ import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.useca
 import { LocalStrategy } from './infrastructure/security/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { JwtStrategy } from './infrastructure/security/jwt.strategy'; 
 
 @Module({
   imports: [
@@ -43,7 +42,6 @@ import { JwtStrategy } from './infrastructure/security/jwt.strategy';
     PrismaService,
     Bcrypt,
     LocalStrategy,
-    JwtStrategy, 
     {
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,
