@@ -31,19 +31,19 @@ export class UserController {
   }
 
   @MessagePattern('findOneUser')
-  async findOne(@Param() id: FindByIdDto) {
+  async findOne(@Payload() id: FindByIdDto) {
     const result = await this.findByIdUserCases.execute(id.id);
     return { message: 'Usuario encontrado', data: result };
   }
 
   @MessagePattern('updateUser')
-  async update(@Param() id: FindByIdDto, @Body() dto: UpdateUserDto) {
+  async update(@Payload() id: FindByIdDto, @Body() dto: UpdateUserDto) {
     const result = await this.updateUserCases.execute(id.id, dto);
     return { message: 'Usuario actualizado correctamente', data: result };
   }
 
   @MessagePattern('deleteUser')
-  async delete(@Param() id: FindByIdDto) {
+  async delete(@Payload() id: FindByIdDto) {
     const result = await this.deleteUserCases.execute(id.id);
     return { message: 'Usuario eliminado de manera exitosa', data: result };
   }
