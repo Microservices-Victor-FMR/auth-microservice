@@ -6,8 +6,6 @@ import {
   Injectable,
   Param,
   Patch,
-  Req,
-  UseGuards,
 } from '@nestjs/common';
 import { FindByIdUserCases } from '../../application/use-cases/user/findById-user.usecase';
 import { FindByIdDto } from 'src/application/dtos/findById-user.dto';
@@ -15,10 +13,8 @@ import { UpdateUserCases } from '../../application/use-cases/user/update-user.us
 import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
 import { DeleteUserCases } from 'src/application/use-cases/user/delete-user.usecase';
 import { FindAllUserCases } from 'src/application/use-cases/user/findAll-user.usecase';
-import { JwtAuthGuard } from '../security/guard/jwt-auth.guard';
-import { Request } from 'express';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Injectable()
 @Controller('profile')
 export class UserController {
   constructor(
@@ -28,27 +24,27 @@ export class UserController {
     private readonly deleteUserCases: DeleteUserCases,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async findAll(@Req() req: Request) {
-    return await this.findAllUserCases.execute(req.user);
+  @MessagePattern('findAllUser')
+  async findAll(@Payload() payload) {
+    const result = await this.findAllUserCases.execute();
+    return { message: 'Usuarios encontrados', data: result };
   }
 
-  @Get('/:id')
-  async findOne(@Param() dto: FindByIdDto) {
-    const result = await this.findByIdUserCases.execute(dto.id);
-    return result;
+  @MessagePattern('findOneUser')
+  async findOne(@Param() id: FindByIdDto) {
+    const result = await this.findByIdUserCases.execute(id.id);
+    return { message: 'Usuario encontrado', data: result };
   }
 
-  @Patch('/:id')
+  @MessagePattern('updateUser')
   async update(@Param() id: FindByIdDto, @Body() dto: UpdateUserDto) {
     const result = await this.updateUserCases.execute(id.id, dto);
-    return { message: 'User updated successfully', data: result };
+    return { message: 'Usuario actualizado correctamente', data: result };
   }
 
-  @Delete('/:id')
+  @MessagePattern('deleteUser')
   async delete(@Param() id: FindByIdDto) {
     const result = await this.deleteUserCases.execute(id.id);
-    return { message: 'User deleted successfully', data: result };
+    return { message: 'Usuario eliminado de manera exitosa', data: result };
   }
 }

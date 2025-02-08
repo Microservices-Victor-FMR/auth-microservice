@@ -67,7 +67,6 @@ export class PrismaUserRepository implements UserRepository {
       data: {
         name: user.name,
         email: user.email,
-        password_hash: user.getPassword(),
       },
     });
 
