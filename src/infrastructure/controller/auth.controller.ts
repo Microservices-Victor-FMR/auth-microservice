@@ -1,13 +1,12 @@
-import { Controller, Injectable, UseGuards } from '@nestjs/common';
+import { Controller} from '@nestjs/common';
 import { RegisterAuthCases } from '../../application/use-cases/auth/register-auth.usecase';
 import { RegisterDto } from 'src/application/dtos/register-user.dto';
 import { LoginAuthUseCases } from 'src/application/use-cases/auth/login-auth.usecase';
-import { LocalAuthGuard } from '../security/guard/autenticación-local.guard';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LoginDto } from 'src/application/dtos/login-auth.dto';
+import { User } from 'src/core/entities/user.entity';
 
-@Injectable()
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(
     private readonly registerAuthCases: RegisterAuthCases,
@@ -15,21 +14,39 @@ export class AuthController {
   ) {}
 
   @MessagePattern('register')
-  async register(@Payload() dto: RegisterDto) {
-    const result = await this.registerAuthCases.execute(dto);
+  async register(@Payload() registerDto: RegisterDto) {
+    const result = await this.registerAuthCases.execute(registerDto);
     return { message: 'Usuario creado con exito', data: result };
   }
 
+  @MessagePattern('validateUser')
+  async validateUser(@Payload() loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const result = await this.loginAuthCases.validateUser(email, password);
+    return { data: result };
+  }
+
   @MessagePattern('login')
-  @UseGuards(LocalAuthGuard)
-  async login(@Payload() login: LoginDto) {
-    const { token } = await this.loginAuthCases.login(login);
+  async login(@Payload() payload: any) {
+    const { data } = payload;
+    const user = new User(
+      data.id,
+      data.name,
+      data.email,
+      data.password_hash,
+      data.role,
+      data.is_verify,
+      data.is_deleted,
+      data.created_at,
+      data.updated_at,
+    );
+    const { token } = await this.loginAuthCases.login(user);
     return { message: 'Usuario logueado con exito', token: token };
   }
 
   @MessagePattern('logout')
   async logout(@Payload() logout: any) {
-    return { message: 'Logout Exitoso' };
+    return { message: 'Sesión cerrada correctamente' };
   }
 
   @MessagePattern('reset-password')
