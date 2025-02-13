@@ -6,6 +6,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LoginDto } from 'src/application/dtos/login-auth.dto';
 import { User } from 'src/core/entities/user.entity';
 import { VerifyAccountAuthUseCases } from 'src/application/use-cases/auth/verify-account-auth.usecase';
+import { ResendVerifyEmailAuthUseCases } from 'src/application/use-cases/auth/resend-verify-email-auth.usecase';
 
 @Controller()
 export class AuthController {
@@ -13,6 +14,7 @@ export class AuthController {
     private readonly registerAuthCases: RegisterAuthCases,
     private readonly loginAuthCases: LoginAuthUseCases,
     private readonly verifyAccountAuthUseCases: VerifyAccountAuthUseCases,
+    private readonly ResendVerifyEmailAuthUseCases: ResendVerifyEmailAuthUseCases,
   ) {}
 
   @MessagePattern('register')
@@ -33,6 +35,12 @@ export class AuthController {
   
     const result = await this.verifyAccountAuthUseCases.execute(payload);
     return { message: 'Cuenta verificada con exito', data: result };
+  }
+
+  @MessagePattern('resend-verification')
+  async resendverifyEmail(@Payload() payload: any) {
+    const result = await this.ResendVerifyEmailAuthUseCases.execute(payload);
+    return { message: 'Reenvio de correo verificacion enviado con exito', data: result };
   }
 
   @MessagePattern('login')

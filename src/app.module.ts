@@ -18,6 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TransportNatsModule } from './infrastructure/messaging/transport.module';
 import { VerifyAccountAuthUseCases} from './application/use-cases/auth/verify-account-auth.usecase';
+import { ResendVerifyEmailAuthUseCases } from './application/use-cases/auth/resend-verify-email-auth.usecase';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { VerifyAccountAuthUseCases} from './application/use-cases/auth/verify-ac
     },
     RegisterAuthCases,
     VerifyAccountAuthUseCases,
+    ResendVerifyEmailAuthUseCases,
     LoginAuthUseCases,
     FindAllUserCases,
     FindByIdUserCases,
