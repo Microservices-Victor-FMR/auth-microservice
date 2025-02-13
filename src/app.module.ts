@@ -17,7 +17,7 @@ import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.useca
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TransportNatsModule } from './infrastructure/messaging/transport.module';
-import { VerifyAccountUseCases } from './application/use-cases/auth/verify-account-auth.usecase';
+import { VerifyAccountAuthUseCases} from './application/use-cases/auth/verify-account-auth.usecase';
 
 @Module({
   imports: [
@@ -49,6 +49,7 @@ import { VerifyAccountUseCases } from './application/use-cases/auth/verify-accou
       useClass: PrismaAuthRepository,
     },
     RegisterAuthCases,
+    VerifyAccountAuthUseCases,
     LoginAuthUseCases,
     FindAllUserCases,
     FindByIdUserCases,

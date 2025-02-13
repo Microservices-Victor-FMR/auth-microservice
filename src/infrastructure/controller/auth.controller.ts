@@ -26,6 +26,13 @@ export class AuthController {
     return { data: result };
   }
 
+  @MessagePattern('verify-account')
+  async verifyAccount(@Payload() payload: any) {
+  
+    const result = await this.verifyAccountAuthUseCases.execute(payload);
+    return { message: 'Cuenta verificada con exito', data: result };
+  }
+
   @MessagePattern('login')
   async login(@Payload() payload: any) {
     const { data } = payload;
