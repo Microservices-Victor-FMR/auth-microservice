@@ -16,9 +16,12 @@ import { UserController } from './infrastructure/controller/user.controller';
 import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.usecase';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { TransportNatsModule } from './infrastructure/messaging/transport.module';
+import { VerifyAccountUseCases } from './application/use-cases/auth/verify-account-auth.usecase';
 
 @Module({
   imports: [
+    TransportNatsModule,
     PrismaModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development', '.env.production'],
