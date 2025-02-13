@@ -1,16 +1,18 @@
-import { Controller} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { RegisterAuthCases } from '../../application/use-cases/auth/register-auth.usecase';
 import { RegisterDto } from 'src/application/dtos/register-user.dto';
 import { LoginAuthUseCases } from 'src/application/use-cases/auth/login-auth.usecase';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LoginDto } from 'src/application/dtos/login-auth.dto';
 import { User } from 'src/core/entities/user.entity';
+import { VerifyAccountAuthUseCases } from 'src/application/use-cases/auth/verify-account-auth.usecase';
 
 @Controller()
 export class AuthController {
   constructor(
     private readonly registerAuthCases: RegisterAuthCases,
     private readonly loginAuthCases: LoginAuthUseCases,
+    private readonly verifyAccountAuthUseCases: VerifyAccountAuthUseCases,
   ) {}
 
   @MessagePattern('register')
