@@ -13,15 +13,16 @@ import { FindByIdUserCases } from './application/use-cases/user/findById-user.us
 import { UpdateUserCases } from './application/use-cases/user/update-user.usecase';
 import { PrismaAuthRepository } from './infrastructure/database/prisma-auth.database.repository';
 import { UserController } from './infrastructure/controller/user.controller';
-import { PassportModule } from '@nestjs/passport';
 import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.usecase';
-import { LocalStrategy } from './infrastructure/security/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { TransportNatsModule } from './infrastructure/messaging/transport.module';
+import { VerifyAccountAuthUseCases} from './application/use-cases/auth/verify-account-auth.usecase';
+import { ResendVerifyEmailAuthUseCases } from './application/use-cases/auth/resend-verify-email-auth.usecase';
 
 @Module({
   imports: [
-    PassportModule,
+    TransportNatsModule,
     PrismaModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development', '.env.production'],
@@ -35,13 +36,11 @@ import { ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-   
   ],
   controllers: [AuthController, UserController],
   providers: [
     PrismaService,
     Bcrypt,
-    LocalStrategy,
     {
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,
@@ -51,6 +50,8 @@ import { ConfigService } from '@nestjs/config';
       useClass: PrismaAuthRepository,
     },
     RegisterAuthCases,
+    VerifyAccountAuthUseCases,
+    ResendVerifyEmailAuthUseCases,
     LoginAuthUseCases,
     FindAllUserCases,
     FindByIdUserCases,

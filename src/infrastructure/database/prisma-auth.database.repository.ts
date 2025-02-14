@@ -32,9 +32,18 @@ export class PrismaAuthRepository implements AuthRepository {
       newUser.updated_at,
     );
   }
+async verifyAccount(userId: string): Promise<string> {
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        is_verify: true,
+      },
+    });
 
-
-
+    return null
+}
   login(user: User): Promise<User> {
       return
   }

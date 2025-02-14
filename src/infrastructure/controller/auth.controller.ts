@@ -1,35 +1,69 @@
-import { Controller, Injectable, UseGuards } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { RegisterAuthCases } from '../../application/use-cases/auth/register-auth.usecase';
 import { RegisterDto } from 'src/application/dtos/register-user.dto';
 import { LoginAuthUseCases } from 'src/application/use-cases/auth/login-auth.usecase';
-import { LocalAuthGuard } from '../security/guard/autenticación-local.guard';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LoginDto } from 'src/application/dtos/login-auth.dto';
+import { User } from 'src/core/entities/user.entity';
+import { VerifyAccountAuthUseCases } from 'src/application/use-cases/auth/verify-account-auth.usecase';
+import { ResendVerifyEmailAuthUseCases } from 'src/application/use-cases/auth/resend-verify-email-auth.usecase';
 
-@Injectable()
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(
     private readonly registerAuthCases: RegisterAuthCases,
     private readonly loginAuthCases: LoginAuthUseCases,
+    private readonly verifyAccountAuthUseCases: VerifyAccountAuthUseCases,
+    private readonly ResendVerifyEmailAuthUseCases: ResendVerifyEmailAuthUseCases,
   ) {}
 
   @MessagePattern('register')
-  async register(@Payload() dto: RegisterDto) {
-    const result = await this.registerAuthCases.execute(dto);
+  async register(@Payload() registerDto: RegisterDto) {
+    const result = await this.registerAuthCases.execute(registerDto);
     return { message: 'Usuario creado con exito', data: result };
   }
 
+  @MessagePattern('validateUser')
+  async validateUser(@Payload() loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const result = await this.loginAuthCases.validateUser(email, password);
+    return { data: result };
+  }
+
+  @MessagePattern('verify-account')
+  async verifyAccount(@Payload() payload: any) {
+  
+    const result = await this.verifyAccountAuthUseCases.execute(payload);
+    return { message: 'Cuenta verificada con exito', data: result };
+  }
+
+  @MessagePattern('resend-verification')
+  async resendverifyEmail(@Payload() payload: any) {
+    const result = await this.ResendVerifyEmailAuthUseCases.execute(payload);
+    return { message: 'Reenvio de correo verificacion enviado con exito', data: result };
+  }
+
   @MessagePattern('login')
-  @UseGuards(LocalAuthGuard)
-  async login(@Payload() login: LoginDto) {
-    const { token } = await this.loginAuthCases.login(login);
+  async login(@Payload() payload: any) {
+    const { data } = payload;
+    const user = new User(
+      data.id,
+      data.name,
+      data.email,
+      data.password_hash,
+      data.role,
+      data.is_verify,
+      data.is_deleted,
+      data.created_at,
+      data.updated_at,
+    );
+    const { token } = await this.loginAuthCases.login(user);
     return { message: 'Usuario logueado con exito', token: token };
   }
 
   @MessagePattern('logout')
   async logout(@Payload() logout: any) {
-    return { message: 'Logout Exitoso' };
+    return { message: 'Sesión cerrada correctamente' };
   }
 
   @MessagePattern('reset-password')
