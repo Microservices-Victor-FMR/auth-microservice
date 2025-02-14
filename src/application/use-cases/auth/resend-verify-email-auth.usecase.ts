@@ -33,10 +33,7 @@ export class ResendVerifyEmailAuthUseCases {
           statusCode: HttpStatus.UNAUTHORIZED,
         });
       }
-      throw new RpcException({
-        message: 'Error al por parte del servidor',
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      });
+      throw new RpcException(error);
     }
   }
 }
