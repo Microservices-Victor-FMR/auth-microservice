@@ -17,6 +17,11 @@ export class ResendVerifyEmailAuthUseCases {
   async execute(email: string) {
     try {
       const user = await this.userRepository.findByEmail(email);
+
+      if (!user) {
+        throw new RpcException({message: 'Usuario no encontrado',statusCode: HttpStatus.NOT_FOUND});
+      }
+
       if (user.is_verify === true) {
         throw new RpcException({ message: 'El email ya ha sido verificado', statusCode: HttpStatus.OK, microservice: 'Auth' });
       }
