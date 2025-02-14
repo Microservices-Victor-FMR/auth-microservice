@@ -20,10 +20,15 @@ export class VerifyAccountAuthUseCases {
       return await this.authRepository.verifyAccount(userId);
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
-        console.log(error.message);
-        throw new RpcException(error);
+        throw new RpcException({
+          message: 'Token inválido o expirado',
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
       }
-      throw error;
+      throw new RpcException({
+        message: 'Error al verificar cuenta',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
   }
 }

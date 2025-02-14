@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { User } from 'src/core/entities/user.entity';
 import { AuthRepository } from 'src/core/repositories/auth.repository';
 import { PrismaService } from './prisma.service';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class PrismaAuthRepository implements AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
-
 
   async register(user: User): Promise<User> {
     const newUser = await this.prisma.user.create({
@@ -32,19 +33,32 @@ export class PrismaAuthRepository implements AuthRepository {
       newUser.updated_at,
     );
   }
-async verifyAccount(userId: string): Promise<string> {
-    await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        is_verify: true,
-      },
-    });
+  async verifyAccount(userId: string): Promise<string> {
+    try {
+      await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          is_verify: true,
+        },
+      });
 
-    return null
-}
+      return null;
+    } catch (error) {
+      if (error instanceof PrismaClientValidationError) {
+        throw new RpcException({
+          message: 'Error inesperado en el servidor intentelo mas tarde',
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        });
+      }
+      throw new RpcException({
+        message: 'Error inesperado en el servidor, inténtalo nuevamente más tarde',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
   login(user: User): Promise<User> {
-      return
+    return;
   }
 }
