@@ -12,7 +12,7 @@ export class FindByEmailUserUseCases {
     if (user) {
       throw new RpcException({
         message: 'El usuario ya existe',
-        statusCode: HttpStatus.FOUND,
+        statusCode: HttpStatus.CONFLICT,
         microservice: 'Auth',
       });
     }
