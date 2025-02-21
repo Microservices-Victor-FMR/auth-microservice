@@ -1,33 +1,27 @@
-import { User } from 'src/core/entities/user.entity';
+import { User } from '../../../core/entities/user.entity';
 import { RegisterDto } from '../../dtos/register-user.dto';
-import { UserRepository } from 'src/core/repositories/user.respository';
+import { UserRepository } from '../../../core/repositories/user.respository';
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AUTH_REPOSITORY, USER_REPOSITORY } from 'src/token.contants';
+import { AUTH_REPOSITORY, USER_REPOSITORY } from '../../../token.contants';
 import { Bcrypt } from '../../../infrastructure/security/bcrypt.security';
-import { AuthRepository } from 'src/core/repositories/auth.repository';
+import { AuthRepository } from '../../../core/repositories/auth.repository';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { JwtService } from '@nestjs/jwt';
+import { FindByEmailUserUseCases } from '../user/findByEmail-user.usecase';
 @Injectable()
 export class RegisterAuthCases {
   constructor(
     @Inject(AUTH_REPOSITORY) private readonly authRepository: AuthRepository,
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
     @Inject('NATS_SERVICE') private readonly nats_authentication: ClientProxy,
+    private readonly findByEmailUserUseCases: FindByEmailUserUseCases,
     private readonly bcrypt: Bcrypt,
     private readonly jwtService: JwtService,
   ) {}
 
   async execute(dto: RegisterDto): Promise<User | string> {
-    const existingUser = await this.userRepository.findByEmail(dto.email);
-
-    if (existingUser) {
-      throw new RpcException({
-        message: 'El usuario ya existe',
-        statusCode: HttpStatus.FOUND,
-        microservice: 'Auth',
-      });
-    }
-
+   await this.findByEmailUserUseCases.verifyEmailExists(dto.email);
+  
     if (dto.password !== dto.confirmPassword) {
       throw new RpcException({
         message: 'Las contraseñas no coinciden',

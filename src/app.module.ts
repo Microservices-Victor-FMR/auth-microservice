@@ -19,6 +19,7 @@ import { ConfigService } from '@nestjs/config';
 import { TransportNatsModule } from './infrastructure/messaging/transport.module';
 import { VerifyAccountAuthUseCases} from './application/use-cases/auth/verify-account-auth.usecase';
 import { ResendVerifyEmailAuthUseCases } from './application/use-cases/auth/resend-verify-email-auth.usecase';
+import {FindByEmailUserUseCases } from './application/use-cases/user/findByEmail-user.usecase';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ResendVerifyEmailAuthUseCases } from './application/use-cases/auth/rese
     RegisterAuthCases,
     VerifyAccountAuthUseCases,
     ResendVerifyEmailAuthUseCases,
+    FindByEmailUserUseCases,
     LoginAuthUseCases,
     FindAllUserCases,
     FindByIdUserCases,
