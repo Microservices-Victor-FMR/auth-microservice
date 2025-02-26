@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { FindAllUserCases } from './findAll-user.usecase';
 import { USER_REPOSITORY } from '../../../token.contants';
+import { RpcException } from '@nestjs/microservices';
 
 describe('FindByIdUserCases', () => {
   let findAllUserCases: FindAllUserCases;
@@ -29,9 +30,8 @@ describe('FindByIdUserCases', () => {
   });
 
   it('Deberia retornar una respuesta ok si no hay usuarios registrados', async () => {
-    mockUserRepository.findAll.mockResolvedValue('No hay usuarios registrados');
+    mockUserRepository.findAll.mockResolvedValue([]);
 
-    const user = await findAllUserCases.execute();
-    expect(user).toBe('No hay usuarios registrados');
+    await expect(findAllUserCases.execute()).rejects.toThrow(RpcException);
   });
 });
