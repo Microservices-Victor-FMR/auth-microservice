@@ -15,7 +15,7 @@ import { DeleteUserCases } from 'src/application/use-cases/user/delete-user.usec
 import { FindAllUserCases } from 'src/application/use-cases/user/findAll-user.usecase';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Controller('profile')
+@Controller()
 export class UserController {
   constructor(
     private readonly findAllUserCases: FindAllUserCases,
@@ -25,7 +25,7 @@ export class UserController {
   ) {}
 
   @MessagePattern('findAllUser')
-  async findAll(@Payload() payload) {
+  async findAll(@Payload() payload: any) {
     const result = await this.findAllUserCases.execute();
     return { message: 'Usuarios encontrados', data: result };
   }
