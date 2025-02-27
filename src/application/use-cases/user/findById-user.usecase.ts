@@ -1,18 +1,21 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { User } from 'src/core/entities/user.entity'; 
-import { UserRepository } from 'src/core/repositories/user.respository'; 
-import { USER_REPOSITORY } from 'src/token.contants';
-
+import { BadRequestException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { User } from 'src/core/entities/user.entity';
+import { UserRepository } from 'src/core/repositories/user.respository';
+import { USER_REPOSITORY } from '../../../token.contants';
 
 @Injectable()
 export class FindByIdUserCases {
-  constructor(@Inject(USER_REPOSITORY)private readonly userRepository: UserRepository) {}
+  constructor(@Inject(USER_REPOSITORY) private readonly userRepository: UserRepository) {}
 
   async execute(id: string): Promise<User> {
-    const  findUser = await this.userRepository.findById(id);
-
-    if(!findUser){
-        throw new BadRequestException('Usuario no encontrado')
+    const findUser = await this.userRepository.findById(id);
+    if (!findUser) {
+      throw new RpcException({
+        message: 'Usuario no encontrado',
+        statusCode: HttpStatus.NOT_FOUND,
+        microservice: 'Auth',
+      });
     }
     return await this.userRepository.findById(id);
   }
