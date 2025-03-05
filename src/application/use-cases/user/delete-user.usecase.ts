@@ -4,7 +4,7 @@ import { UserRepository } from 'src/core/repositories/user.respository';
 import { USER_REPOSITORY } from 'src/token.contants';
 
 @Injectable()
-export class DeleteUserCases {
+export class DeleteUserUseCases {
   constructor(
     @Inject(USER_REPOSITORY) private readonly useRepository: UserRepository,
   ) {}

@@ -5,7 +5,7 @@ import { UserRepository } from 'src/core/repositories/user.respository';
 import { USER_REPOSITORY } from '../../../token.contants';
 
 @Injectable()
-export class FindAllUserCases {
+export class FindAllUserUseCases {
   constructor(@Inject(USER_REPOSITORY) private readonly userRepository: UserRepository) {}
   async execute(): Promise<User[]> {
     const AllUser = await this.userRepository.findAll();

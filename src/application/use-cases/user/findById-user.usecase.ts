@@ -1,11 +1,11 @@
-import { BadRequestException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { User } from 'src/core/entities/user.entity';
 import { UserRepository } from 'src/core/repositories/user.respository';
 import { USER_REPOSITORY } from '../../../token.contants';
 
 @Injectable()
-export class FindByIdUserCases {
+export class FindByIdUserUseCases {
   constructor(@Inject(USER_REPOSITORY) private readonly userRepository: UserRepository) {}
 
   async execute(id: string): Promise<User> {
@@ -17,6 +17,6 @@ export class FindByIdUserCases {
         microservice: 'Auth',
       });
     }
-    return await this.userRepository.findById(id);
+    return findUser;
   }
 }

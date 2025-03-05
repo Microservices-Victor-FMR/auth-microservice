@@ -6,11 +6,11 @@ import { PrismaUserRepository } from './infrastructure/database/prisma-user.data
 import { PrismaService } from './infrastructure/database/prisma.service';
 import { AUTH_REPOSITORY, USER_REPOSITORY } from './token.contants';
 import { Bcrypt } from './infrastructure/security/bcrypt.security';
-import { DeleteUserCases } from './application/use-cases/user/delete-user.usecase';
-import { FindAllUserCases } from './application/use-cases/user/findAll-user.usecase';
+import { DeleteUserUseCases } from './application/use-cases/user/delete-user.usecase';
+import { FindAllUserUseCases } from './application/use-cases/user/findAll-user.usecase';
 import { RegisterAuthCases } from './application/use-cases/auth/register-auth.usecase';
-import { FindByIdUserCases } from './application/use-cases/user/findById-user.usecase';
-import { UpdateUserCases } from './application/use-cases/user/update-user.usecase';
+import { FindByIdUserUseCases } from './application/use-cases/user/findById-user.usecase';
+import { UpdateUserUseCases } from './application/use-cases/user/update-user.usecase';
 import { PrismaAuthRepository } from './infrastructure/database/prisma-auth.database.repository';
 import { UserController } from './infrastructure/controller/user.controller';
 import { LoginAuthUseCases } from './application/use-cases/auth/login-auth.usecase';
@@ -20,6 +20,8 @@ import { TransportNatsModule } from './infrastructure/messaging/transport.module
 import { VerifyAccountAuthUseCases} from './application/use-cases/auth/verify-account-auth.usecase';
 import { ResendVerifyEmailAuthUseCases } from './application/use-cases/auth/resend-verify-email-auth.usecase';
 import {FindByEmailUserUseCases } from './application/use-cases/user/findByEmail-user.usecase';
+import { ChangedEmailUserUseCases } from './application/use-cases/user/changedEmail-user.usecases';
+import { UpdateEmailUserUseCases } from './application/use-cases/user/updateEmail-user.usecase';
 
 @Module({
   imports: [
@@ -55,10 +57,12 @@ import {FindByEmailUserUseCases } from './application/use-cases/user/findByEmail
     ResendVerifyEmailAuthUseCases,
     FindByEmailUserUseCases,
     LoginAuthUseCases,
-    FindAllUserCases,
-    FindByIdUserCases,
-    UpdateUserCases,
-    DeleteUserCases,
+    FindAllUserUseCases,
+    FindByIdUserUseCases,
+    UpdateUserUseCases,
+    ChangedEmailUserUseCases,
+    UpdateEmailUserUseCases,
+    DeleteUserUseCases,
   ],
 })
 export class AppModule {}
